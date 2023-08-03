@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sports Buddy Finder</title>
+  <style>
+    body {
+      background-image: url('background.jpg');
+      background-size: cover;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    
+    h1 {
+      color: black;
+      font-weight: bold;
+      font-size: 30px;
+      text-align: center;
+    }
+    
+    .outer-wrapper {
+      margin: 40px auto;
+      margin-top: 10%;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.7);
+      max-width: fit-content;
+      max-height: fit-content;
+      background-color:rgba(255, 255, 255, 0.7);
+    }
+    
+    .table-wrapper {
+      overflow-y: scroll;
+      overflow-x: scroll;
+      height: fit-content;
+      max-height: 66.4vh;
+      margin: 15px;
+      padding-bottom: 20px;
+    }
+    
+    table {
+      min-width: max-content;
+      border-collapse: separate;
+      border-spacing: 0;
+      background-color: white;
+    }
+    
+    .table-filter {
+      border-radius: 5px;
+    }
+    
+    table th {
+      position: sticky;
+      top: 0;
+      background-color: #133b5c;
+      color: white;
+      text-align: center;
+      font-weight: bold;
+      font-size: 18px;
+      outline: 0.7px solid black;
+      border: 1.5px solid black;
+      padding: 15px;
+    }
+    
+    table th:first-child {
+      border-top-left-radius: 4px;
+    }
+    
+    table th:last-child {
+      border-top-right-radius: 4px;
+    }
+    
+    table th:not(:last-child) {
+      border-right: 1px solid #ccc;
+    }
+    
+    table td {
+      text-align: left;
+      font-size: 15px;
+      border: 1px solid #ccc;
+      padding: 15px;
+      padding-left: 20px;
+    }
+  </style>
+</head>
+
+<body>
+    <div class="outer-wrapper">
+      <h1>Sports Buddy Finder</h1>
+        <div class="table-wrapper">
+            <table id="user-table">
+                <thead>
+                    <tr>
+                        <th col-index="0">#</th>
+                        <th col-index="1">Full Name</th>
+                        <th col-index="2">
+                            Gender:
+                            <select class="table-filter" onchange="filterRows()" data-colindex="2">
+                                <option value="all">All</option>
+                            </select>
+                        </th>
+                        <th col-index="3">
+                          SportsType:
+                          <select class="table-filter" onchange="filterRows()" data-colindex="3">
+                              <option value="all">All</option>
+                          </select>
+                      </th>
+                        <th col-index="4">Email</th>
+                        <th col-index="5">Telegram ID</th>
+
+                    </tr>
+                </thead>
+                <tbody id="user-table-body">
+                </tbody>
+            </table>
+            <div style="text-align: center;">
+              <div class="signup_link">
+                <button onclick="location.href='memberpage.html'" type="button">Go back to Main Page</button>            
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-app.js";
+        import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-firestore.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+          apiKey: "AIzaSyAjw8i633FC3gFUfN9CeAmqeT4MGcJU894",
+          authDomain: "sportspo.firebaseapp.com",
+          databaseURL: "https://sportspo-default-rtdb.firebaseio.com",
+          projectId: "sportspo",
+          storageBucket: "sportspo.appspot.com",
+          messagingSenderId: "446529195409",
+          appId: "1:446529195409:web:489297aaf705121ca09e30",
+          measurementId: "G-4ZJYVW7XL4"
+        };
+        
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore();
+
+        const userTableBody = document.getElementById("user-table-body");
+
+        
+        async function getUsers() {
+            const usersCollection = collection(db, "Userlist");
+            const usersQuery = query(usersCollection, where("Contact", "==", "Yes"));
+            const snapshot = await getDocs(usersQuery);
+            const users = [];
+            snapshot.forEach(doc => {
+                users.push(doc.data());
+            });
+            return users;
+        }
+
+        async function addAllUsersToTable() {
+            const users = await getUsers();
+            userTableBody.innerHTML = "";
+            let rowNumber = 1;
+            users.forEach(user => {
+                const row = userTableBody.insertRow();
+                row.insertCell().innerHTML = rowNumber;
+                row.insertCell().innerHTML = user.Username;
+                row.insertCell().innerHTML = user.Gender;
+                row.insertCell().innerHTML = user.SportsType;
+                row.insertCell().innerHTML = user.Email;
+                row.insertCell().innerHTML = user.TelegramID;
+                rowNumber++;
+            });
+            setFilterDropdownValues(users); // add this line to call the setFilterDropdownValues function
+        }
+
+        addAllUsersToTable();
+        
+          
+
+        function createDropdownOptions(options) {
+          const dropdownOptions = options.map(option => {
+            const optionElement = document.createElement("option");
+            optionElement.value = option;
+            optionElement.text = option;
+            return optionElement;
+          });
+          return dropdownOptions;
+        }
+        
+        let genderFilterDropdown = null;
+        let sportsTypeFilterDropdown = null;
+        
+        function setFilterDropdownValues(users) {
+          const genders = ["Male", "Female", "Others"];
+          const sportsType = ["Badminton", "Basketball", "Dance", "Football", "Frisbee",  "Netball", "Judo", "Squash", "Swimming", "Table Tennis"];
+        
+          const genderDropdownOptions = createDropdownOptions([].concat("", genders));
+          const sportsTypeDropdownOptions = createDropdownOptions([].concat("", sportsType));
+        
+          genderFilterDropdown = document.querySelector('select[data-colindex="2"]');
+          if (genderFilterDropdown) {
+            genderFilterDropdown.innerHTML = ""; // clear any existing options
+            genderDropdownOptions.forEach(option => genderFilterDropdown.add(option));
+            genderFilterDropdown.addEventListener("change", filterRows);
+          }
+        
+          sportsTypeFilterDropdown = document.querySelector('select[data-colindex="3"]');
+          if (sportsTypeFilterDropdown) {
+            sportsTypeFilterDropdown.innerHTML = ""; // clear any existing options
+            sportsTypeDropdownOptions.forEach(option => sportsTypeFilterDropdown.add(option));
+            sportsTypeFilterDropdown.addEventListener("change", filterRows);
+          }
+        
+          function filterRows() {
+            const selectedGender = genderFilterDropdown.value;
+            const selectedSportsType = sportsTypeFilterDropdown.value;
+            const rows = userTableBody.getElementsByTagName("tr");
+            for (let i = 0; i < rows.length; i++) {
+              const row = rows[i];
+              const gender = row.cells[2].textContent;
+              const sportsType = row.cells[3].textContent;
+              if ((selectedGender === "" || selectedGender === "all" || gender === selectedGender) &&
+                  (selectedSportsType === "" || selectedSportsType === "all" || sportsType.toLowerCase().includes(selectedSportsType.toLowerCase()))) {
+                row.style.display = "";
+              } else {
+                row.style.display = "none";
+              }
+            }
+          }
+        }
+        
+    </script>
+    </body>
+    </html>
+

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete User Account</title>
+    <link rel="stylesheet">
+</head>
+<body>
+  <div style="display: flex; 
+  flex-direction: column; 
+  justify-content: center; 
+  align-items: center; 
+  background-image: url('background.jpg'); 
+  background-size: cover;
+  height: 100vh; 
+  background-repeat: no-repeat;
+  background-position: center center;">
+      <div style="background-color: rgba(255,255,255,0.7); padding: 20px; border-radius: 10px;border: 1px solid black;">
+          <h1 style="font-size: 2rem; font-family: Arial, sans-serif">Delete Account</h1>
+            <label style="font-weight: bold; font-size: 1.2rem; font-family: Arial, sans-serif">Email</label>
+            <input id="Emailbox" type="text" style="padding: 5px; border: 1px solid #ccc; border-radius: 5px;">
+            
+            <label style="font-weight: bold; font-size: 1.2rem; font-family: Arial, sans-serif">Password</label>
+            <input id="Passwordbox" type="text" style="padding: 5px; border: 1px solid #ccc; border-radius: 5px;">
+            
+            <hr style="margin-top: 20px; margin-bottom: 20px;">
+            
+            <button id="Deletebtn" style="background-color: darkblue; color: white; padding: 10px 20px; border: none; border-radius: 5px;">DELETE ACCOUNT</button>
+            <br>
+            <div style="text-align: right;">
+            <div class="signup_link">
+              <br>
+                <a href="memberpage.html">Go back to Home Page</a>
+                </div>
+              </div>
+          </div>
+    </div>
+    
+
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-analytics.js";
+        import { getFirestore, doc, getDoc, setDoc, collection, addDoc, updateDoc, deleteDoc, deleteField } 
+        from "https://www.gstatic.com/firebasejs/9.17.2/firebase-firestore.js";
+
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        const firebaseConfig = {
+          apiKey: "AIzaSyAjw8i633FC3gFUfN9CeAmqeT4MGcJU894",
+          authDomain: "sportspo.firebaseapp.com",
+          databaseURL: "https://sportspo-default-rtdb.firebaseio.com",
+          projectId: "sportspo",
+          storageBucket: "sportspo.appspot.com",
+          messagingSenderId: "446529195409",
+          appId: "1:446529195409:web:489297aaf705121ca09e30",
+          measurementId: "G-4ZJYVW7XL4"
+          };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const db = getFirestore();
+
+        let Emailbox = document.getElementById('Emailbox');
+        let Passwordbox = document.getElementById('Passwordbox');
+        let Deletebtn = document.getElementById("Deletebtn");
+
+        async function DeleteDocument() {
+          if (validateEmail() && validatePassword()) {
+            const email = Emailbox.value.trim();
+            const password = Passwordbox.value.trim();
+            const userRef = doc(db, "Userlist", email);
+            const userDoc = await getDoc(userRef);
+            if (userDoc.exists()) {
+              const userData = userDoc.data();
+              console.log("Password entered:", password);
+              console.log("Password stored:", userData.password);
+              if (password === userData.Password) {
+                try {
+                  await deleteDoc(userRef);
+                  alert("User account deleted successfully.");
+                  location.replace("frontpage.html")
+                } catch (error) {}
+              } else {
+                alert("Incorrect password.");
+              }
+            } else {
+              alert("User with this email does not exist.");
+            }
+          }
+        }        
+
+        Deletebtn.addEventListener("click", DeleteDocument);
+
+        function validateEmail(){
+            let email = Emailbox.value.trim();
+            if(email === ""){
+                alert("Please enter the email address of the user to be deleted.");
+                return false;
+            }
+            else if(!/\S+@\S+\.\S+/.test(email)){
+                alert("Please enter a valid email address.");
+                return false;
+            }
+            return true;
+        }
+
+        function validatePassword() {
+          let password = Passwordbox.value.trim();
+          if (password === "") {
+            alert("Please enter the password for the user account.");
+            return false;
+          } else {
+            return true;
+          }
+        }        
+    </script>
+</body>
+</html>

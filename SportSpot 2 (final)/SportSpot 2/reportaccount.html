@@ -1,0 +1,150 @@
+<html>
+  <head>
+    <title>Report Account</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-image: url('background.jpg'); 
+        background-size: cover;
+      }
+      .container {
+        max-width: 600px;
+        border: 1px solid black;
+        text-align: center;
+        margin-left: 30%;
+        margin:auto;
+        margin-top: 5%;
+        background-color:rgba(255, 255, 255, 0.7);
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      }
+      h1 {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 20px;
+      }
+      label {
+        margin-bottom: 10px;
+        font-weight: bold;
+        display: block;
+      }
+      input[type="email"],
+      input[type="text"] {
+        padding: 10px;
+        font-size: 16px;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        width: 100%;
+      }
+      input[type="submit"] {
+        padding: 10px 20px;
+        background-color: darkblue;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+      }
+      input[type="submit"]:hover {
+        background-color: darkblue;
+      }
+
+      .signup_link{
+        margin: 3%;
+      }
+
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Report Account</h1>
+      <form>
+        <label for="name">Enter your name:</label>
+        <input type="text" required id="name" name="name">
+        <label for="account">Enter the email of account you want to report:</label>
+        <input type="email" required id="account" name="account">
+        <label for="reason">Enter the reason for reporting:</label>
+        <input type="text" required id="reason" name="reason">
+        <input type="submit" value="Submit">
+        <br>
+        <div style="text-align: center;">
+          <div class="signup_link">
+               <a href= "memberpage.html" >  Go back to Main Page </a>
+              </div>
+            </div>
+      </form>
+      <div id="thank-you-message" style="display: none; background-color: #4CAF50; color: white; font-size: 1.2rem; padding: 1rem; border-radius: 4px; text-align: center; margin-top: 2rem;">
+        <span style="display: inline-block; margin-bottom: 1rem;">Thank you for contacting us! We will get back to you soon.</span>
+        <br>
+    </div>
+
+<script type = "module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-analytics.js";
+       const firebaseConfig = {
+          apiKey: "AIzaSyAjw8i633FC3gFUfN9CeAmqeT4MGcJU894",
+          authDomain: "sportspo.firebaseapp.com",
+          databaseURL: "https://sportspo-default-rtdb.firebaseio.com",
+          projectId: "sportspo",
+          storageBucket: "sportspo.appspot.com",
+          messagingSenderId: "446529195409",
+          appId: "1:446529195409:web:489297aaf705121ca09e30",
+          measurementId: "G-4ZJYVW7XL4"
+        };
+      
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        
+        import {getFirestore, doc, getDoc,setDoc,collection, addDoc,updateDoc,deleteDoc,deleteField} 
+        from "https://www.gstatic.com/firebasejs/9.17.2/firebase-firestore.js"
+            
+        const db = getFirestore();
+
+        const form = document.querySelector('form');
+      const thankYouMessage = document.querySelector('#thank-you-message');
+    
+
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault(); // prevent the default form submission behavior
+      
+        const name = form.elements['name'].value;
+        const account = form.elements['account'].value;
+        const reason = form.elements['reason'].value;
+      
+        try {
+          // check if the account exists in the Userlist collection
+          const accountDoc = await getDoc(doc(db, 'Userlist', account));
+          if (accountDoc.exists()) {
+            // save the form data to Firestore with the email as the document name
+            await setDoc(doc(db, 'Reports', name), {
+              name: name,
+              account: account,
+              reason: reason
+            });
+            alert('Thank You! We will get back to you on the report status.');
+            form.reset(); // clear the form fields
+            thankYouMessage.style.display = 'block'; // show the thank you message
+            setTimeout(() => {
+              thankYouMessage.style.display = 'none';
+            }, 5000);
+            window.location.href = 'memberpage.html';
+          } else {
+            // display an error message if the account doesn't exist in the Userlist collection
+            alert('Reported account not found');
+          }
+        } catch (error) {
+          alert('Error saving form data to Firestore');
+        }
+      });
+      
+      </script>
+    </body>
+</html>

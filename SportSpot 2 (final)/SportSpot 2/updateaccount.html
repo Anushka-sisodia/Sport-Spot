@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update User Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url("background.jpg");
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center center;
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            border: 1px solid black;
+            padding: 20px;
+            width: 50%;
+            background-color: rgba(255, 255, 255, 0.8);
+            text-align: center;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 10px;
+            text-align: left;
+        }
+        input {
+            margin-bottom: 20px;
+            padding: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            width: 100%;
+        }
+        select {
+            margin-bottom: 20px;
+            padding: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            width: 100%;
+        }
+        hr {
+            margin: 20px 0;
+        }
+        button {
+            font-weight: bold;
+            padding: 10px 20px;
+            background-color: darkblue;
+            color: white;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: darkblue;
+        }
+        .sports-grid {
+          display: grid;
+          grid-template-columns: repeat(12, 12fr);
+          grid-gap: 5px;
+        }
+        
+        .sports-grid div {
+          display: flex;
+          align-items: center;
+        }
+        
+        .sports-grid input[type="checkbox"] {
+          margin-right: 2px;
+        }
+        
+        .sports-grid label {
+          margin-left: 2px;
+          margin-top : 1px;
+          margin-bottom : 1px;
+          margin-right: 12px;
+        }
+    </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Update Profile</h1>
+    <label for="Emailbox">Email</label>
+    <input id="Emailbox" type="text">
+
+    <label for="NewNamebox">New Username</label>
+    <input id="NewNamebox" type="text">
+
+    <label for="NewGenderbox">New Gender</label>
+    <select id="NewGenderbox">
+      <option value=" "></option>
+      <option value ="Male">Male</option>
+      <option value ="Female">Female</option>
+      <option value ="Others">Others</option>
+    </select>
+
+    <label for="NewTelegramIDbox">New Telegram ID</label>
+    <input id="NewTelegramIDbox" type="text">
+
+    <label for="NewContactbox">Do you allow us to show your contact details?</label>
+    <select id="NewContactbox">
+      <option value=" "></option>
+        <option value="Yes">Yes</option>
+        <option value="No">No</option>
+    </select>
+    <div class="sports-grid">
+    <label>Choose a sport</label> 
+        <input type="checkbox" name="Sportbox" id="Badminton" value="Badminton">
+        <label for="badminton">Badminton</label>
+      
+        <input type="checkbox" name="Sportbox" id="Basketball" value="Basketball">
+        <label for="basketball">Basketball</label>
+      
+        <input type="checkbox" name="Sportbox" id="Dance" value="Dance">
+        <label for="dance">Dance</label>
+      
+        <input type="checkbox" name="Sportbox" id="Football" value="Football">
+        <label for="football">Football</label>
+      
+        <input type="checkbox" name="Sportbox" id="Frisbee" value="Frisbee">
+        <label for="frisbee">Frisbee</label>
+      
+        <input type="checkbox" name="Sportbox" id="Netball" value="Netball">
+        <label for="netball">Netball</label>
+      
+        <input type="checkbox" name="Sportbox" id="Judo" value="Judo">
+        <label for="judo">Judo</label>
+      
+        <input type="checkbox" name="Sportbox" id="Squash" value="Squash">
+        <label for="squash">Squash</label>
+      
+        <input type="checkbox" name="Sportbox" id="Swimming" value="Swimming">
+        <label for="swimming">Swimming</label>
+      
+        <input type="checkbox" name="Sportbox" id="Table Tennis" value="Table Tennis">
+        <label for="table_tennis">Table Tennis</label>
+    </div>
+    <div style="position: absolute; bottom: 20px; width: 100%;">
+        <button id="Updatebtn">UPDATE</button>
+    </div>
+</div>
+</body>
+
+
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-analytics.js";
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+      
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        const firebaseConfig = {
+          apiKey: "AIzaSyAjw8i633FC3gFUfN9CeAmqeT4MGcJU894",
+          authDomain: "sportspo.firebaseapp.com",
+          databaseURL: "https://sportspo-default-rtdb.firebaseio.com",
+          projectId: "sportspo",
+          storageBucket: "sportspo.appspot.com",
+          messagingSenderId: "446529195409",
+          appId: "1:446529195409:web:489297aaf705121ca09e30",
+          measurementId: "G-4ZJYVW7XL4"
+        };
+        
+      
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        
+        import {getFirestore, doc, getDoc,setDoc,collection, addDoc,updateDoc,deleteDoc,deleteField} 
+        from "https://www.gstatic.com/firebasejs/9.17.2/firebase-firestore.js"
+            
+        const db = getFirestore();
+
+        let Emailbox = document.getElementById('Emailbox');
+        let Updatebtn = document.getElementById("Updatebtn");
+       let sportstype = [];
+        var checkboxes = document.getElementsByName("sportstype");
+
+        async function UpdateDocument() {
+            if (validateEmail()) {
+              const email = Emailbox.value.trim();
+              const userRef = doc(db, "Userlist", email);
+              const userDoc = await getDoc(userRef);
+             
+              const sports = document.getElementsByName("Sportbox");
+          
+              if (userDoc.exists()) {
+                try {
+                  const updates = {};
+                  if (NewTelegramIDbox.value) {
+                    updates.TelegramID = NewTelegramIDbox.value;
+                  }
+                  if (NewGenderbox.value != " ") {
+                    updates.Gender = NewGenderbox.value;
+                  }
+                  if (NewNamebox.value) {
+                    updates.Username = NewNamebox.value;
+                  }
+                  if (NewContactbox.value != " ") {
+                    updates.Contact = NewContactbox.value;
+                  }
+                  const sports = document.getElementsByName("Sportbox");
+  for (var i = 0; i < sports.length; i++) {
+    if (sports[i].checked) {
+      if (!updates.SportsType) {
+        updates.SportsType = [];
+      }
+      updates.SportsType.push(sports[i].value);
+    }
+  }
+                  
+
+                  
+                  await updateDoc(userRef, updates);
+                  alert("User details updated successfully.");
+                  location.replace("memberpage.html");
+                } catch (error) {
+                  alert("Failed to update user details, error: " + error);
+                }
+              } else {
+                alert("User with this email does not exist.");
+              }
+            }
+          }
+          
+        Updatebtn.addEventListener("click", UpdateDocument);
+
+        function validateEmail(){
+            let email = Emailbox.value.trim();
+            if(email === ""){
+                alert("Please enter the email address of the user to be updated.");
+                return false;
+            }
+            else if(!/\S+@\S+\.\S+/.test(email)){
+                alert("Please enter a valid email address.");
+                return false;
+            }
+            return true;
+        }
+
+        
+    </script>
+  </body>
+</html>

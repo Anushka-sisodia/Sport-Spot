@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Form</title>
+</head>
+
+<body>
+    <style>
+
+        body {
+            background-image: url('background.jpg');
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+       label {
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+            margin-bottom: 5px;
+        }
+        input, select {
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            width: 100%;
+        }
+        select {
+            width: 100%;
+        }
+        button {
+            background-color: blue;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            margin-top: 10px;
+            cursor: pointer;
+            display: block;
+            margin: 0 auto;
+        }
+        .registration-box {
+            width: 50%;
+            margin: 0 auto;
+            margin-top: -2%;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.6);
+    
+        }
+        .registration-box h2 {
+            text-align: center;
+        }
+        .sports-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1000fr);
+            grid-gap: 5px;
+          }
+          
+          .sports-grid div {
+            display: flex;
+            align-items: center;
+          }
+          
+          .sports-grid input[type="checkbox"] {
+            margin-right: 5px;
+          }
+          
+          .sports-grid label {
+            margin-left: 2px;
+            margin-top : -10px;
+            margin-bottom : -1px;
+            margin-right: 12px;
+          }
+    </style>
+
+    <div class="registration-box">
+        <h2>Registration</h2>
+        <label>Username</label> <input id="Namebox" type="text">  
+        <label>Gender</label> 
+        <select id="Genbox">
+            <option value ="Male">Male</option>
+            <option value ="Female">Female</option>
+            <option value ="Others">Others</option>
+        </select>
+        <label>Email</label> <input id="Emailbox" type="text"> 
+        <label>Password</label> <input id="Passwordbox" type="password"> 
+        <label>Confirm Password</label> <input id="CPasswordbox" type="password"> 
+        <label>TelegramID (Optional)</label> <input id="TelegramIDbox" type="text">
+        <div class="sports-grid">
+            <label>Choose Sport</label>
+            <div>
+              <input type="checkbox" name="Sportbox" id="Badminton" value="Badminton">
+              <label for="badminton">Badminton</label>
+            </div>
+            <div>
+              <input type="checkbox" name="Sportbox" id="Basketball" value="Basketball">
+              <label for="basketball">Basketball</label>
+            </div>
+            <div>
+              <input type="checkbox" name="Sportbox" id="Dance" value="Dance">
+              <label for="dance">Dance</label>
+            </div>
+            <div>
+              <input type="checkbox" name="Sportbox" id="Football" value="Football">
+              <label for="football">Football</label>
+            </div>
+            <div>
+              <input type="checkbox" name="Sportbox" id="Frisbee" value="Frisbee">
+              <label for="frisbee">Frisbee</label>
+            </div>
+            <div>
+              <input type="checkbox" name="Sportbox" id="Netball" value="Netball">
+              <label for="netball">Netball</label>
+            </div>
+            <div>
+              <input type="checkbox" name="Sportbox" id="Judo" value="Judo">
+              <label for="judo">Judo</label>
+            </div>
+            <div>
+              <input type="checkbox" name="Sportbox" id="Squash" value="Squash">
+              <label for="squash">Squash</label>
+            </div>
+            <div>
+              <input type="checkbox" name="Sportbox" id="Swimming" value="Swimming">
+              <label for="swimming">Swimming</label>
+            </div>
+            <div>
+              <input type="checkbox" name="Sportbox" id="Table Tennis" value="Table Tennis">
+              <label for="table_tennis">Table Tennis</label>
+            </div>
+          </div>
+          
+        <label>Do you allow us to show ur details?</label>
+        <select id="Contactbox">
+            <option value ="Yes">Yes</option>
+            <option value ="No">No</option>
+        </select>
+    
+        <hr>
+    
+        <button id="Registerbtn">REGISTER</button>
+        <br>
+        <div style="text-align: center;">
+            <div class="signup_link">
+              Already registered? <a href="login.html">Login</a> or <a href="frontpage.html">Continue as guest</a>
+            </div>
+        </div>
+    </div>
+    
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-analytics.js";
+        import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-auth.js";
+        import {getFirestore, doc, getDoc, setDoc, collection, addDoc, updateDoc, deleteDoc, deleteField} from "https://www.gstatic.com/firebasejs/9.17.2/firebase-firestore.js";
+
+        // Your Firebase SDK configuration
+        const firebaseConfig = {
+        apiKey: "AIzaSyAjw8i633FC3gFUfN9CeAmqeT4MGcJU894",
+        authDomain: "sportspo.firebaseapp.com",
+        databaseURL: "https://sportspo-default-rtdb.firebaseio.com",
+        projectId: "sportspo",
+        storageBucket: "sportspo.appspot.com",
+        messagingSenderId: "446529195409",
+        appId: "1:446529195409:web:489297aaf705121ca09e30",
+        measurementId: "G-4ZJYVW7XL4"
+        };
+
+        // Initialize Firebase app
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const auth = getAuth(app);
+        const db = getFirestore();
+
+        let Namebox = document.getElementById('Namebox');
+        let Genbox= document.getElementById('Genbox');
+        let Emailbox = document.getElementById('Emailbox');
+        let Passwordbox = document.getElementById('Passwordbox');
+        let CPasswordbox = document.getElementById('CPasswordbox');
+        let TelegramIDBox = document.getElementById('TelegramIDbox');
+        let ContactBox = document.getElementById('Contactbox');
+        let Sportbox = document.getElementById('Sportbox');
+        var sportstype = [];
+        var checkboxes = document.getElementsByName("sportstype");
+
+        let Registerbtn = document.getElementById("Registerbtn");
+          
+          async function registerUser() {
+            const username = document.getElementById("Namebox").value;
+            const gender = document.getElementById("Genbox").value;
+            const email = document.getElementById("Emailbox").value;
+            const password = document.getElementById("Passwordbox").value;
+            const cpassword = document.getElementById("CPasswordbox").value;
+            const telegramID = document.getElementById("TelegramIDbox").value;
+            const contact = document.getElementById("Contactbox").value;
+            const sportstype = [];
+          
+            const sports = document.getElementsByName("Sportbox");
+            for (var i = 0; i < sports.length; i++) {
+              if (sports[i].checked) {
+                sportstype.push(sports[i].value);
+              }
+            }
+            if (validateName() && validateEmail() && validatePassword() && validateConfirmPassword() && validateContact()&&validateGender()) {
+            try {
+              const auth = getAuth();
+              const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+              const user = userCredential.user;
+              const userRef = doc(db, "Userlist", email);
+              const userDoc = await getDoc(userRef);
+              if (userDoc.exists()) {
+                alert("User with this email is already registered.");
+            } else {
+              const docRef = await setDoc(userRef, {
+                Username: Namebox.value,
+                    Gender: Genbox.value,
+                    Email: email,
+                    Password: password,
+                    Confirm_Password: CPasswordbox.value,
+                    TelegramID: TelegramIDBox.value,
+                    Contact: ContactBox.value,
+                    SportsType: sportstype,
+              });
+              alert("Registration Successful! Login Now!");
+              location.replace("login.html");
+            }}catch (error) {
+              console.error(error);
+              alert("Registration failed!", error);
+            }}
+        }
+        
+          Registerbtn.addEventListener("click", registerUser);
+
+            // Validates the user's name
+        // Input: None
+        // Output: Boolean indicating whether the name is valid or not
+        function validateName() {
+            let Username = Namebox.value.trim();
+          
+            // Check if the name field is empty
+            if (Username === "") {
+              alert("Please enter your name.");
+              return false;
+            }
+            // Check if the name contains only letters and numbers
+            else if (!/^[a-zA-Z0-9]+$/.test(Username)) {
+              alert("Please enter a valid name.");
+              return false;
+            }
+            return true;
+          }          
+
+        // Validates the user's email address
+        // Input: None
+        // Output: Boolean indicating whether the email address is valid or not
+        function validateEmail(){
+            let email = Emailbox.value.trim();
+
+            // Check if the email field is empty
+            if(email === ""){
+                alert("Please enter your email address.");
+                return false;
+            }
+            // Check if the email address has a valid format
+            else if(!/\S+@\S+\.\S+/.test(email)){
+                alert("Please enter a valid email address.");
+                return false;
+            }
+            return true;
+        }
+
+        // Validates the user's password
+        // Input: None
+        // Output: Boolean indicating whether the password is valid or not
+        function validatePassword(){
+            let password = Passwordbox.value.trim();
+
+            // Check if the password field is empty
+            if(password === ""){
+                alert("Please enter your password.");
+                return false;
+            }
+            // Check if the password has at least 8 characters
+            else if(password.length < 8){
+                alert("Please enter a password with at least 8 characters.");
+                return false;
+            }
+            // Check if the password has at least one special character
+            else if(!/[!@#$%^&*(),.?":{}|<>]/.test(password)){
+                alert("Please include at least one special character in your password.");
+                return false;
+            }
+            // Check if the password has at least one uppercase letter
+            else if(!/[A-Z]/.test(password)){
+                alert("Please include at least one uppercase letter in your password.");
+                return false;
+            }
+            // Check if the password has at least one lowercase letter
+            else if(!/[a-z]/.test(password)){
+                alert("Please include at least one lowercase letter in your password.");
+                return false;
+            }
+            return true;
+        }
+
+    
+        function validateConfirmPassword(){
+            // Get the password and confirm password values
+            let password = Passwordbox.value.trim();
+            let confirmPassword = CPasswordbox.value.trim();
+            // If confirm password is empty, show an alert and return false
+            if(confirmPassword === ""){
+                alert("Please confirm your password.");
+                return false;
+            }
+            // If confirm password does not match password, show an alert and return false
+            else if(confirmPassword !== password){
+                alert("Passwords do not match. Please try again.");
+                return false;
+            }
+            // Otherwise, return true
+            return true;
+        }
+       
+        function validateContact(){
+            // Get the contact value
+            let contact = ContactBox.value.trim();
+            // If contact is empty, show an alert and return false
+            if(contact === ""){
+                alert("Please select an option for contact.");
+                return false;
+            }
+            // Otherwise, return true
+            return true;
+        }
+        
+        function validateGender(){
+            // Get the gender value
+            let gender = Genbox.value.trim();
+            // If gender is empty, show an alert and return false
+            if(gender === ""){
+                alert("Please select an option for gender.");
+                return false;
+            }
+            // Otherwise, return true
+            return true;
+        }
+        
+
+        </script>
+    </body>
+</html>
